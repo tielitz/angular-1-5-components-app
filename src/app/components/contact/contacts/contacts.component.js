@@ -1,15 +1,24 @@
-var contacts = {
-  bindings: {
-    contacts: '<',
-    filter: '<'
-  },
-  templateUrl: './contacts.html',
-  controller: 'ContactsController'
-};
-
 angular
   .module('components.contact')
-  .component('contacts', contacts)
+  .component('contacts', {
+    bindings: {
+      contacts: '<',
+      filter: '<'
+    },
+    templateUrl: './contacts.html',
+    controller: function ContactsController($filter, $state) {
+      var ctrl = this;
+      var contacts = ctrl.contacts;
+
+      ctrl.filteredContacts = $filter('contactsFilter')(contacts, ctrl.filter);
+
+      ctrl.goToContact = function (event) {
+        $state.go('contact', {
+          id: event.contactId
+        });
+      };
+    }
+  })
   .config(function ($stateProvider) {
     $stateProvider
       .state('contacts', {
